@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import include, url
+from django.urls import path
 
 urlpatterns = [
 	url(r'^', include('qa.urls')),
@@ -24,4 +25,5 @@ urlpatterns = [
 	url(r'^ask/', include('qa.urls')),
 	url(r'^popular/', include('qa.urls')),
 	url(r'^new/', include('qa.urls')),
+    path('admin/', admin.site.urls),
 ]

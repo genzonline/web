@@ -80,8 +80,6 @@ DATABASES = {
         'NAME': 'stepic_web',
         'USER' : 'box',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',        
     }
 }
 
