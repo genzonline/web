@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
+from .forms import AskForm, AnswerForm
 
 
 from .models import Question, Answer
@@ -12,7 +13,7 @@ def void(request):
 	raise Http404
 
 def new(request):
-	questions = Question.objects.all().order_by('-id')
+	questions = Question.objects.new()
 	limit = request.GET.get('limit', 10)
 	page = request.GET.get('page', 1)
 	paginator = Paginator(questions, limit)
@@ -27,7 +28,7 @@ def new(request):
 	})
 
 def popular(request):
-	questions = Question.objects.all().order_by('-rating')
+	questions = Question.objects.popular()
 	limit = request.GET.get('limit', 10)
 	page = request.GET.get('page', 1)
 	paginator = Paginator(questions, limit)
@@ -43,11 +44,36 @@ def popular(request):
 
 
 def question(request, id):
+
 	try:
 		question = Question.objects.get(id=id)
 	except Question.DoesNotExist:
 		raise Http404
+
+	if request.method == "POST":
+		form = AnswerForm(request.POST)
+		if form.is_valid():
+			answer = form.save()
+			url = answer.question.get_url()
+			return HttpResponseRedirect(url)
+	else:
+		form = AnswerForm()
+		
 	return render(request, 'qa/question.html', {
 		'question' : question,
 		'answers' : Answer.objects.filter(question=question),
+		'form' : form
+	})
+
+def ask(request):
+	if request.method == "POST":
+		form = AskForm(request.POST)
+		if form.is_valid():
+			question = form.save()
+			url = question.get_url()
+			return HttpResponseRedirect(url)
+	else:
+		form = AskForm()
+	return render(request, 'qa/ask.html', {
+		'form' : form
 	})

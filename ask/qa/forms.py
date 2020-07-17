@@ -20,7 +20,7 @@ class AnswerForm(forms.Form):
 
 	choices = []
 	for i in Question.objects.all()[:]:
-		choices.append(("{}".format(i.id), "{}".format(i.id)))
+		choices.append(("{}".format(i.id), "{}".format(i.title)))
 
 
 	question = forms.ChoiceField(choices=choices)
