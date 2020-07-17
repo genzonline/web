@@ -11,7 +11,7 @@ class AskForm(forms.Form):
 
 	def save(self):
 		u = User.objects.get(id=1)
-		question = Question(**self.cleaned_data, author=u)
+		question = Question(text=self.cleaned_data['text'], title=self.cleaned_data['title'], author=u)
 		question.save()
 		return question
 
