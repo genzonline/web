@@ -23,6 +23,9 @@ class Question(models.Model):
 	def __unicode__(self):
 		return self.text
 
+	def get_url(self):
+		return '/question/%d/' % self.id
+
 
 class Answer(models.Model):
 	text = models.CharField(max_length=500)
