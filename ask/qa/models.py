@@ -11,7 +11,7 @@ class QuestionManager(models.Manager):
 	    return self.order_by('-rating')
 
 class User(models.Model):
-	login = models.CharField(max_length=100, unique=True)
+	username = models.CharField(max_length=100, unique=True)
 	email = models.EmailField()
 	password = models.CharField(max_length=100)
 
@@ -42,16 +42,16 @@ class Session(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	expires = models.DateTimeField()
 
-def do_login(login, password):
+def do_login(username, password):
 	try:
-		user = User.objects.get(login=login)
+		user = User.objects.get(username=username)
 	except User.DoesNotExist:
 		return None
 	hashed_pass = salt_and_hash(password)
 	if user.password != hashed_pass:
 		return None
 	session = Session(
-		key = generate_long_random_key(login),
+		key = generate_long_random_key(),
 		user = user,
 		expires = timezone.now() + datetime.timedelta(days=5),
 	)
@@ -61,5 +61,5 @@ def do_login(login, password):
 def salt_and_hash(password):
 	return password
 
-def generate_long_random_key(login):
-	return '{}'.format(login) + str(random.randrange(1, 2**63 - 1))
+def generate_long_random_key():
+	return str(random.randrange(1, 2**63 - 1))

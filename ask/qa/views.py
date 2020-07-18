@@ -113,10 +113,10 @@ def login(request):
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		if form.is_valid():
-			login = form.cleaned_data['login']
+			username = form.cleaned_data['username']
 			password  = form.cleaned_data['password']
 			url = '/'
-			sessionid = do_login(login, password)
+			sessionid = do_login(username, password)
 			if sessionid:
 				response = HttpResponseRedirect(url)
 				response.set_cookie('sessionid', sessionid,
@@ -125,7 +125,7 @@ def login(request):
 				)
 				return response
 			else:
-				error = u'Wrong login / password'
+				error = u'Wrong username / password'
 		else:
 			error = u'Wrong format of data'
 	form = LoginForm()

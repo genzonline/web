@@ -3,14 +3,14 @@ from .models import Question, User, salt_and_hash, Answer
 
 
 class LoginForm(forms.Form):
-	login = forms.CharField(max_length=100)
+	username = forms.CharField(max_length=100)
 	password = forms.CharField(max_length=100, widget=forms.PasswordInput)
 
 	def clean(self):
 		return self.cleaned_data
 
 class SignUpForm(forms.Form):
-	login = forms.CharField(max_length=100)
+	username = forms.CharField(max_length=100)
 	email = forms.EmailField()
 	password = forms.CharField(max_length=100, widget=forms.PasswordInput)
 
@@ -19,7 +19,7 @@ class SignUpForm(forms.Form):
 
 	def save(self):
 		user = User(
-			login=self.cleaned_data['login'],
+			username=self.cleaned_data['username'],
 			email=self.cleaned_data['email'],
 			password=salt_and_hash(self.cleaned_data['password'],)
 		)
