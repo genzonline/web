@@ -59,7 +59,7 @@ def question(request, id):
 		if form.is_valid():
 			answer = form.save()
 			answer.user = user
-			answer = form.save()
+			answer.save()
 			url = answer.question.get_url()
 			return HttpResponseRedirect(url)
 	else:
@@ -78,7 +78,7 @@ def ask(request):
 		if form.is_valid():
 			question = form.save()
 			question.user = user
-			question = form.save()
+			question.save()
 			url = question.get_url()
 			return HttpResponseRedirect(url)
 	else:
