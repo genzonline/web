@@ -74,8 +74,10 @@ def question(request, id):
 def ask(request):
 	if request.method == "POST":
 		form = AskForm(request.POST)
-		form._user = request.user
+		user = request.user
 		if form.is_valid():
+			question = form.save()
+			question.user = user
 			question = form.save()
 			url = question.get_url()
 			return HttpResponseRedirect(url)

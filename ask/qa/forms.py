@@ -53,7 +53,7 @@ class AnswerForm(forms.Form):
 		pass
 
 	def save(self):
-		u = User.objects.get(id=1)
-		answer = Answer(text=self.cleaned_data['text'], question_id=int(self.cleaned_data['question']), author=self.cleaned_data['_user'])
+		user = User.objects.get(id=1)
+		answer = Answer(text=self.cleaned_data['text'], question_id=int(self.cleaned_data['question']), author=user)
 		answer.save()
 		return answer
