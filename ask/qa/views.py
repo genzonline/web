@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from .forms import AskForm, AnswerForm
+from .forms import AskForm, AnswerForm, SignUpForm, LoginForm
+import datetime
+from django.utils import timezone
 
 
-from .models import Question, Answer
+
+from .models import Question, Answer, User, do_login
 
 def test(request, *args, **kwargs):
 	return HttpResponse('OK')
@@ -52,6 +55,7 @@ def question(request, id):
 
 	if request.method == "POST":
 		form = AnswerForm(request.POST)
+		form._user = request.user
 		if form.is_valid():
 			answer = form.save()
 			url = answer.question.get_url()
@@ -68,6 +72,7 @@ def question(request, id):
 def ask(request):
 	if request.method == "POST":
 		form = AskForm(request.POST)
+		form._user = request.user
 		if form.is_valid():
 			question = form.save()
 			url = question.get_url()
@@ -76,4 +81,55 @@ def ask(request):
 		form = AskForm()
 	return render(request, 'qa/ask.html', {
 		'form' : form
+	})
+
+def signup(request):
+	error = ''
+	if request.method == "POST":
+		form = SignUpForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			url = request.POST.get('/')
+			sessionid = do_login(user.login, user.password)
+			response = HttpResponseRedirect(url)
+			response.set_cookie('sessionid', sessionid,
+				domain='localhost', httponly=True,
+				expires=timezone.now() + datetime.timedelta(days=5)
+			)
+			return response
+		else:
+			error = u'Wrong format of data'
+	form = SignUpForm()
+	return render(request, 'qa/signup.html',{
+		'error' : error,
+		'form' : form,
+	})
+
+
+
+
+def login(request):
+	error = ''
+	if request.method == "POST":
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			login = form.cleaned_data['login']
+			password  = form.cleaned_data['password']
+			url = '/'
+			sessionid = do_login(login, password)
+			if sessionid:
+				response = HttpResponseRedirect(url)
+				response.set_cookie('sessionid', sessionid,
+					domain='localhost', httponly=True,
+					expires=timezone.now() + datetime.timedelta(days=5)
+				)
+				return response
+			else:
+				error = u'Wrong login / password'
+		else:
+			error = u'Wrong format of data'
+	form = LoginForm()
+	return render(request, 'qa/login.html', {
+		'error' : error,
+		'form' : form,
 	})
