@@ -34,7 +34,8 @@ class AskForm(forms.Form):
 		return self.cleaned_data
 
 	def save(self):
-		question = Question(text=self.cleaned_data['text'], title=self.cleaned_data['title'], author=self.cleaned_data['_user'])
+		user = User.objects.get(id=1)
+		question = Question(text=self.cleaned_data['text'], title=self.cleaned_data['title'], author=user)
 		question.save()
 		return question
 
