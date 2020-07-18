@@ -90,7 +90,7 @@ def signup(request):
 		if form.is_valid():
 			user = form.save()
 			url = request.POST.get('/')
-			sessionid = do_login(user.login, user.password)
+			sessionid = do_login(user.username, user.password)
 			response = HttpResponseRedirect(url)
 			response.set_cookie('sessionid', sessionid,
 				domain='localhost', httponly=True,
